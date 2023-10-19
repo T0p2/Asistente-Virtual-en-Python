@@ -1,9 +1,11 @@
+import imaplib
 import speech_recognition as sr
 import pyttsx3
 import pywhatkit
 import json
 import urllib.request
-import urllib.parse  
+import urllib.parse 
+import AVMYT as yt 
 
 
 
@@ -36,7 +38,6 @@ def alexa():
     with sr.Microphone() as source:
         print('Deci algo ')
         audio = listener.listen(source)
-
     
         try:
             
@@ -60,27 +61,15 @@ def alexa():
 
 
 
-def run_yt_video(voice):
-   
-    voice = voice.replace("reproduce", "reproduciendo")
-    talk(voice)
+def run_yt_video(song):
 
-    # Extraer el nombre de la canción
-    song = voice
-    for forma in list:
-        song = song.replace(forma, "")
+    song = song.replace("reproduciendo", "")
     pywhatkit.playonyt(song.strip())
 
     
-def run_yt_sub(voice):
+def run_yt_sub(canal_yt):
         
-    canal_yt = voice
-
-    #reemplaza la forma que tenemos para identificar que se quiere por blanco
-    for forma in list:
-        canal_yt = canal_yt.replace(forma, "")
-
-
+    canal_yt = canal_yt.replace("buscando", "")
     # Hacemos una limpieza en el nombre del canal para que este sin espacios
     canal_yt = urllib.parse.quote(canal_yt)
     canal_yt = canal_yt.replace("%20", "")
@@ -118,16 +107,24 @@ def call_functions():
     list = ["reproduci", "reproduce"]
 
  # Verificar si alguna forma está en la entrada de voz
-    if any(i in input for i in list):
-            run_yt_video(input)
+    for forma in list:
+        if forma in input:
+                input = input.replace(forma, "reproduciendo")
+                talk(input)
+
+                run_yt_video(input)
     
     else:
 
     #Saber los subs de un canal
         list = ["cuantos Subs tiene", "cuantos subscriptores tiene", "Subs in youtube de ", "in Youtube"]
 
-        if any (i in input for i in list):
-            run_yt_sub(input)
+
+        for forma in list: 
+            if forma in input:
+                input = input.replace (forma,"buscando")
+                talk(input)
+                run_yt_sub(input)
         
 
 
