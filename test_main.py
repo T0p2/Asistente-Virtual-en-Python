@@ -7,7 +7,7 @@ import urllib.parse
 
 
 
-api_key = "AIzaSyCBfxe1t34R0ai0Xh_a9iCUKykDQ2x0ctc"
+api_key = "Api key"
 
 
 listener = sr.Recognizer() 
