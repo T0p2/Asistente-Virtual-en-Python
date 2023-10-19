@@ -1,17 +1,22 @@
-import imaplib
+
 import speech_recognition as sr
 import pyttsx3
 import pywhatkit
 import json
 import urllib.request
 import urllib.parse 
-import AVMYT as yt 
+import spoty
 
 
+#vars para spotify
+client_id = ""
+client_secret = ""
 
+#vars para yt
 api_key = "AIzaSyCBfxe1t34R0ai0Xh_a9iCUKykDQ2x0ctc"
 
-list = []
+#vars globales
+all_forms = []
 listener = sr.Recognizer() 
 name = "Alexa"
 voz = pyttsx3.init()
@@ -95,6 +100,11 @@ def run_yt_sub(canal_yt):
         talk(f"{canal_yt} tiene {subs} suscriptores.")
 
 
+def run_spo_music(song):
+    song = song.replace("abriendo y buscando en spotify", "")
+
+    spoty.play(keys[""])
+
 
 
         
@@ -104,28 +114,40 @@ def call_functions():
 
 # Reproducir algo en YouTube
 
-    list = ["reproduci", "reproduce"]
+    all_forms = ["reproduci in youtube", "reproduce in youtube"]
 
  # Verificar si alguna forma está en la entrada de voz
-    for forma in list:
+    for forma in all_forms:
         if forma in input:
                 input = input.replace(forma, "reproduciendo")
                 talk(input)
 
                 run_yt_video(input)
+                break
     
     else:
 
     #Saber los subs de un canal
-        list = ["cuantos Subs tiene", "cuantos subscriptores tiene", "Subs in youtube de ", "in Youtube"]
+        all_forms = ["cuantos Subs tiene", "cuantos subscriptores tiene", "Subs in youtube de ", "in Youtube"]
 
 
-        for forma in list: 
+        for forma in all_forms: 
             if forma in input:
                 input = input.replace (forma,"buscando")
                 talk(input)
                 run_yt_sub(input)
+                break
+
+        else:
         
+            all_forms = ["reproduci en spotify", "spotify"]  
+            
+            for forma in all_forms:
+                if forma in input:
+                    input = input.replace(forma, "abriendo y buscando en spotify")
+                    talk (input)
+
+
 
 
         
