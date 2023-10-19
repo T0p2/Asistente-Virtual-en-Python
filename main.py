@@ -9,8 +9,10 @@ import spoty
 
 
 #vars para spotify
-client_id = ""
-client_secret = ""
+client_id = "de9487ddcc674596a40a59c0dbca8013"
+client_secret = "1b821bd750174cec8f757142155c3efc"
+
+
 
 #vars para yt
 api_key = "AIzaSyCBfxe1t34R0ai0Xh_a9iCUKykDQ2x0ctc"
@@ -103,8 +105,7 @@ def run_yt_sub(canal_yt):
 def run_spo_music(song):
     song = song.replace("abriendo y buscando en spotify", "")
 
-    spoty.play(keys[""])
-
+    spoty.play(keys[client_id], keys[client_secret], song)
 
 
         
