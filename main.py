@@ -5,7 +5,11 @@ import pywhatkit
 import json
 import urllib.request
 import urllib.parse 
-import spoty
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+import webbrowser as web
+import pyautogui
+from time import sleep
 
 
 #vars para spotify
@@ -38,9 +42,9 @@ def talk(text):
 
 
 
-def alexa():
+def alexa(voice):
 
-    voice = "Perdon no escuche"
+    talk(voice)
     #codigo para que nos escuche
     with sr.Microphone() as source:
         print('Deci algo ')
@@ -102,16 +106,44 @@ def run_yt_sub(canal_yt):
         talk(f"{canal_yt} tiene {subs} suscriptores.")
 
 
-def run_spo_music(song):
-    song = song.replace("abriendo y buscando en spotify", "")
+def run_spo_music(author):
 
-    spoty.play(keys[client_id], keys[client_secret], song)
+   
+    author = author.replace("abriendo y buscando en spotify", "")
+    
+    
+
+    if len(author) > 1:
+    #Aca entramos a Spoify mediante nuestras credenciales y nos devuelve un json
+        sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id= client_id, client_secret=client_secret))
+        result = sp.search(author)
+
+        
+        
+    #nos devuelve todas las canciones que se encuntran
+        for i in range(0, len(result["tracks"]["items"])):
+
+                name_song = result["tracks"]["items"][i]["name"]
+
+        #abrimos spotify
+        web.open(result["tracks"]["items"][0]["uri"])
+        sleep(5)
+        #pyautogui.press("enter")
+
+
+
+#esto es porque si no nos dan un autor pero si la cancion, buscamos la cancion
+    else:
+
+        talk("no escuche un autor en concreto")
 
 
         
 
 def call_functions():
-    input = alexa()
+
+    sleep(2)
+    input = alexa("hola soy Alexa, que queres hacer")
 
 # Reproducir algo en YouTube
 
@@ -141,12 +173,25 @@ def call_functions():
 
         else:
         
-            all_forms = ["reproduci en spotify", "spotify"]  
+            all_forms = ["reproduci in Spotify","reproduce in Spotify", "busca in Spotify"]  
             
             for forma in all_forms:
                 if forma in input:
                     input = input.replace(forma, "abriendo y buscando en spotify")
                     talk (input)
+
+                    run_spo_music(input)
+                else:
+                    
+                    if input == "hola soy Alexa, que queres hacer":
+                        talk("Perdon no escuche nada")
+                        
+                        call_functions()
+                    else:
+                        talk("Perdon no entendi lo que dijiste")
+                        
+                        call_functions()
+
 
 
 

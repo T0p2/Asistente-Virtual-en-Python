@@ -1,15 +1,28 @@
+
 import speech_recognition as sr
 import pyttsx3
 import pywhatkit
 import json
 import urllib.request
-import urllib.parse  
+import urllib.parse 
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+import webbrowser as web
+import pyautogui
+from time import sleep
+import random
+
+#vars para spotify
+client_id = "de9487ddcc674596a40a59c0dbca8013"
+client_secret = "1b821bd750174cec8f757142155c3efc"
 
 
 
-api_key = "Api key"
+#vars para yt
+api_key = "AIzaSyCBfxe1t34R0ai0Xh_a9iCUKykDQ2x0ctc"
 
-
+#vars globales
+all_forms = []
 listener = sr.Recognizer() 
 name = "Alexa"
 voz = pyttsx3.init()
@@ -36,7 +49,6 @@ def alexa():
     with sr.Microphone() as source:
         print('Deci algo ')
         audio = listener.listen(source)
-
     
         try:
             
@@ -55,78 +67,137 @@ def alexa():
             print('Sorry could not hear')
             
     return(voice)
+
+
+
+
+
+def run_yt_video(song):
+
+    song = song.replace("reproduciendo", "")
+    pywhatkit.playonyt(song.strip())
+
+    
+def run_yt_sub(canal_yt):
         
-    
-
-
-    
-'''Aca lo que hacemos es verificar que el usuario haya dicho 
-Jarvis, reproduce. Si alguna de las dos falla no se escucha nada
-'''
-
-
-def run_yt(text):
-    #voice = alexa()
-
-    # Reproducir algo en YouTube
-    formas_reproducir = ["reproduci", "reproduce"]
-
-    # Verificar si alguna forma está en la entrada de voz
-    if any(forma in text for forma in formas_reproducir):
-        text = text.replace("reproduce", "reproduciendo")
-        talk(text)
-
-        # Extraer el nombre de la canción
-        song = text
-        for forma in formas_reproducir:
-            song = song.replace(forma, "")
-
-
-        pywhatkit.playonyt(song.strip())
-
-    else:
-
-        # Saber los subscriptores de un canal de YouTube
-        formas_subs = ["cuantos Subs tiene", "cuantos subscriptores tiene", "subs de", "decime los subscriptores de"]
-
-        if any(forma in text for forma in formas_subs):
-            canal_yt = text
-
-            #reemplaza la forma que tenemos para identificar que se quiere por blanco
-            for forma in formas_subs:
-                canal_yt = canal_yt.replace(forma, "")
-
-
+    canal_yt = canal_yt.replace("buscando", "")
     # Hacemos una limpieza en el nombre del canal para que este sin espacios
-            canal_yt = urllib.parse.quote(canal_yt)
-            canal_yt = canal_yt.replace("%20", "")
+    canal_yt = urllib.parse.quote(canal_yt)
+    canal_yt = canal_yt.replace("%20", "")
 
 
-        # Encontramos el canal de YouTube, nos devuelve un JSON, con ese JSON buscamos en statistics la cantidad de sub que tiene
-            data = json.loads(urllib.request.urlopen(f'https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername={canal_yt.strip()}&key={api_key}').read().decode('utf-8'))
+    # Encontramos el canal de YouTube, nos devuelve un JSON, con ese JSON buscamos en statistics la cantidad de sub que tiene
+    data = json.loads(urllib.request.urlopen(f'https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername={canal_yt.strip()}&key={api_key}').read().decode('utf-8'))
     
     #evaluamos si se encunetran resultados para el canal
-        if data["pageInfo"]["totalResults"] == 0:
-             talk("No se encontraron resultados para el canal.")
-        else: 
+    if data["pageInfo"]["totalResults"] == 0:
+        talk("No se encontraron resultados para el canal.")
+    else: 
 
-        #agarramos del json el direccionario de items y extraemos los subs
-            items = data.get('items', [])
-            first_item = items[0]
-            subs = first_item['statistics']['subscriberCount']
+    #agarramos del json el direccionario de items y extraemos los subs
+        items = data.get('items', [])
+        first_item = items[0]
+        subs = first_item['statistics']['subscriberCount']
 
 
 
-            # Imprimir la cantidad de suscriptores
-            print(f"{canal_yt} tiene {subs} suscriptores.")
-            talk(f"{canal_yt} tiene {subs} suscriptores.")
-            
+        # Imprimir la cantidad de suscriptores
+        print(f"{canal_yt} tiene {subs} suscriptores.")
+        talk(f"{canal_yt} tiene {subs} suscriptores.")
+
+
+
+
+
+
+
+
+def run_spo_music(author):
+
+   
+    author = author.replace("abriendo y buscando en spotify", "")
+    
+
+    if len(author) > 0:
+    #Aca entramos a Spoify mediante nuestras credenciales y nos devuelve un json
+        sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id= client_id, client_secret=client_secret))
+        result = sp.search(author)
+
+        
+        
+    #nos devuelve todas las canciones que se encuntran
+        for i in range(0, len(result["tracks"]["items"])):
+
+                name_song = result["tracks"]["items"][i]["name"]
+
+        #abrimos spotify
+        web.open(result["tracks"]["items"][0]["uri"])
+        sleep(5)
+        #pyautogui.press("enter")
+
+
+
+#esto es porque si no nos dan un autor pero si la cancion, buscamos la cancion
+    else:
+
+        talk("no escuche un autor en concreto")
+
         
 
 
 
-text = "cuantos Subs tiene Igancio Ayerbe "
-run_yt(text)
 
 
 
+
+
+def call_functions(text):
+    input = text
+
+# Reproducir algo en YouTube
+
+    all_forms = ["reproduci in youtube", "reproduce in youtube"]
+
+ # Verificar si alguna forma está en la entrada de voz
+    for forma in all_forms:
+        if forma in input:
+                input = input.replace(forma, "reproduciendo")
+                talk(input)
+
+                run_yt_video(input)
+                break
+    
+    else:
+
+    #Saber los subs de un canal
+        all_forms = ["cuantos Subs tiene", "cuantos subscriptores tiene", "Subs in youtube de ", "in Youtube"]
+
+
+        for forma in all_forms: 
+            if forma in input:
+                input = input.replace (forma,"buscando")
+                talk(input)
+                run_yt_sub(input)
+                break
+
+        else:
+        
+            all_forms = ["reproduci en spotify", "busca en spotify"]  
+            
+            for forma in all_forms:
+                if forma in input:
+                    input = input.replace(forma, "abriendo y buscando en spotify")
+                    talk (input)
+
+                    run_spo_music(input)
+
+
+
+
+        
+            
+
+    
+
+text = "reproduci en spotify Radiohead-creep"
+call_functions(text)
