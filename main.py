@@ -13,13 +13,13 @@ from time import sleep
 
 
 #vars para spotify
-client_id = "de9487ddcc674596a40a59c0dbca8013"
-client_secret = "1b821bd750174cec8f757142155c3efc"
+client_id = ""
+client_secret = ""
 
 
 
 #vars para yt
-api_key = "AIzaSyCBfxe1t34R0ai0Xh_a9iCUKykDQ2x0ctc"
+api_key = ""
 
 #vars globales
 all_forms = []
@@ -111,7 +111,7 @@ def run_spo_music(author):
    
     author = author.replace("abriendo y buscando en spotify", "")
     
-    
+    author = author.replace(" ", "%20")
 
     if len(author) > 1:
     #Aca entramos a Spoify mediante nuestras credenciales y nos devuelve un json
