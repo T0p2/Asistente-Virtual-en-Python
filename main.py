@@ -13,7 +13,7 @@ from time import sleep
 def call_functions():
 
     sleep(2)
-    input = listen("Hola en que te puedo ayudar?")
+    input = listen()
 
 # Reproducir algo en YouTube
 

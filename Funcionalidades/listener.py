@@ -27,7 +27,7 @@ save_path = os.path.join(temp_file, 'temp.wav')
 
 #Captura audio desde el micrófono, lo almacena en un archivo 
 # temporal y devuelve la ruta del archivo.
-def listen_for_mic(self):
+def listen_for_mic():
     try:
         with sr.Microphone() as source:
             print("Deci algo")
@@ -44,14 +44,15 @@ def listen_for_mic(self):
 
 #Realiza la transcripción de voz a texto utilizando la biblioteca 
 # openai y devuelve el texto transcribido.
-def recognize_audio(self, save_path):
+def recognize_audio(save_path):
     audio_file = open(save_path, "rb")
     transcription = openai.Audio.transcribe("whisper-1", audio_file)
+    print(transcription['text'])
     return transcription['text']
 
 
-def listen(self):
-    return self.recognize_audio( self.listen_for_mic()).lower()
+def listen():
+    return recognize_audio(listen_for_mic()).lower()
 
 
 
