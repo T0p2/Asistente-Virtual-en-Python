@@ -1,7 +1,5 @@
 
-import speech_recognition as sr
-import pyttsx3
-import pywhatkit
+from Funcionalidades.listener import listen
 import json
 import urllib.request
 import urllib.parse 
@@ -10,64 +8,24 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import webbrowser as web
 import pyautogui
 from time import sleep
+import dotenv
+import os
+
+
+
+dotenv.load_dotenv()
 
 
 #vars para spotify
-client_id = ""
-client_secret = ""
-
-
+client_id = os.getenv("ID_Spotify")
+client_secret = os.getenv("Secret_Spotify")
 
 #vars para yt
-api_key = ""
+api_key_yt = os.getenv("API_YT")
+
 
 #vars globales
 all_forms = []
-listener = sr.Recognizer() 
-name = "Alexa"
-voz = pyttsx3.init()
-
-#cambio de voces
-voices = voz.getProperty("voices")
-voz.setProperty("voice", voices[0].id)
-
-
-#input: texto:str, #output: audio
-def talk(text):
-    #para que hable
-    voz.say (text)
-    voz.runAndWait()
-
-
-
-
-
-def alexa(voice):
-
-    talk(voice)
-    #codigo para que nos escuche
-    with sr.Microphone() as source:
-        print('Deci algo ')
-        audio = listener.listen(source)
-    
-        try:
-            
-            voice = listener.recognize_google(audio)
-
-            print('Dijiste: {}'.format(voice))
-
-            
-
-    #si la maquina escucha su nombre en el audio, responde.
-            if(name in voice):
-                voice = voice.replace(name, "")
-
-        
-        except:
-            print('Sorry could not hear')
-            
-    return(voice)
-
 
 
 
@@ -76,6 +34,8 @@ def run_yt_video(song):
 
     song = song.replace("reproduciendo", "")
     pywhatkit.playonyt(song.strip())
+
+
 
     
 def run_yt_sub(canal_yt):
@@ -87,7 +47,7 @@ def run_yt_sub(canal_yt):
 
 
     # Encontramos el canal de YouTube, nos devuelve un JSON, con ese JSON buscamos en statistics la cantidad de sub que tiene
-    data = json.loads(urllib.request.urlopen(f'https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername={canal_yt.strip()}&key={api_key}').read().decode('utf-8'))
+    data = json.loads(urllib.request.urlopen(f'https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername={canal_yt.strip()}&key={api_key_yt}').read().decode('utf-8'))
     
     #evaluamos si se encunetran resultados para el canal
     if data["pageInfo"]["totalResults"] == 0:
@@ -104,6 +64,10 @@ def run_yt_sub(canal_yt):
         # Imprimir la cantidad de suscriptores
         print(f"{canal_yt} tiene {subs} suscriptores.")
         talk(f"{canal_yt} tiene {subs} suscriptores.")
+
+
+
+
 
 
 def run_spo_music(author):
@@ -138,12 +102,15 @@ def run_spo_music(author):
         talk("no escuche un autor en concreto")
 
 
+
+
+
         
 
 def call_functions():
 
     sleep(2)
-    input = alexa("hola soy Alexa, que queres hacer")
+    input = listen("Hola en que te puedo ayudar?")
 
 # Reproducir algo en YouTube
 

@@ -10,16 +10,23 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import webbrowser as web
 import pyautogui
 from time import sleep
-import random
+import dotenv
+import os
+
+
+
+dotenv.load_dotenv()
+
 
 #vars para spotify
-client_id = "de9487ddcc674596a40a59c0dbca8013"
-client_secret = "1b821bd750174cec8f757142155c3efc"
+client_id = os.getenv("ID_Spotify")
+client_secret = os.getenv("Secret_Spotify")
 
 
 
 #vars para yt
-api_key = "AIzaSyCBfxe1t34R0ai0Xh_a9iCUKykDQ2x0ctc"
+api_key_yt = os.getenv("API_YT")
+
 
 #vars globales
 all_forms = []
@@ -42,9 +49,9 @@ def talk(text):
 
 
 
-def alexa():
+def alexa(voice):
 
-    voice = "Perdon no escuche"
+    talk(voice)
     #codigo para que nos escuche
     with sr.Microphone() as source:
         print('Deci algo ')
@@ -87,7 +94,7 @@ def run_yt_sub(canal_yt):
 
 
     # Encontramos el canal de YouTube, nos devuelve un JSON, con ese JSON buscamos en statistics la cantidad de sub que tiene
-    data = json.loads(urllib.request.urlopen(f'https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername={canal_yt.strip()}&key={api_key}').read().decode('utf-8'))
+    data = json.loads(urllib.request.urlopen(f'https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername={canal_yt.strip()}&key={api_key_yt}').read().decode('utf-8'))
     
     #evaluamos si se encunetran resultados para el canal
     if data["pageInfo"]["totalResults"] == 0:
@@ -106,19 +113,14 @@ def run_yt_sub(canal_yt):
         talk(f"{canal_yt} tiene {subs} suscriptores.")
 
 
-
-
-
-
-
-
 def run_spo_music(author):
 
    
     author = author.replace("abriendo y buscando en spotify", "")
     
+    author = author.replace(" ", "%20")
 
-    if len(author) > 0:
+    if len(author) > 1:
     #Aca entramos a Spoify mediante nuestras credenciales y nos devuelve un json
         sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id= client_id, client_secret=client_secret))
         result = sp.search(author)
@@ -142,17 +144,13 @@ def run_spo_music(author):
 
         talk("no escuche un autor en concreto")
 
+
         
 
+def call_functions(input):
 
-
-
-
-
-
-
-def call_functions(text):
-    input = text
+    sleep(2)
+    #input = alexa("hola soy Alexa, que queres hacer")
 
 # Reproducir algo en YouTube
 
@@ -182,7 +180,7 @@ def call_functions(text):
 
         else:
         
-            all_forms = ["reproduci en spotify", "busca en spotify"]  
+            all_forms = ["reproduci in Spotify","reproduce in Spotify", "busca in Spotify"]  
             
             for forma in all_forms:
                 if forma in input:
@@ -190,6 +188,17 @@ def call_functions(text):
                     talk (input)
 
                     run_spo_music(input)
+                else:
+                    
+                    if input == "hola soy Alexa, que queres hacer":
+                        talk("Perdon no escuche nada")
+                        
+                        call_functions()
+                    else:
+                        talk("Perdon no entendi lo que dijiste")
+                        
+                        call_functions()
+
 
 
 
@@ -199,5 +208,5 @@ def call_functions(text):
 
     
 
-text = "reproduci en spotify Radiohead-creep"
-call_functions(text)
+
+call_functions("reproduci in youtube Creep")
