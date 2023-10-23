@@ -1,106 +1,9 @@
-
+from Funcionalidades.talker import talk
 from Funcionalidades.listener import listen
-import json
-import urllib.request
-import urllib.parse 
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-import webbrowser as web
+from Funcionalidades.Metodos.YT import run_yt_video, run_yt_sub
+from Funcionalidades.Metodos.Spotify import run_spo_music
 import pyautogui
 from time import sleep
-import dotenv
-import os
-
-
-
-dotenv.load_dotenv()
-
-
-#vars para spotify
-client_id = os.getenv("ID_Spotify")
-client_secret = os.getenv("Secret_Spotify")
-
-#vars para yt
-api_key_yt = os.getenv("API_YT")
-
-
-#vars globales
-all_forms = []
-
-
-
-
-def run_yt_video(song):
-
-    song = song.replace("reproduciendo", "")
-    pywhatkit.playonyt(song.strip())
-
-
-
-    
-def run_yt_sub(canal_yt):
-        
-    canal_yt = canal_yt.replace("buscando", "")
-    # Hacemos una limpieza en el nombre del canal para que este sin espacios
-    canal_yt = urllib.parse.quote(canal_yt)
-    canal_yt = canal_yt.replace("%20", "")
-
-
-    # Encontramos el canal de YouTube, nos devuelve un JSON, con ese JSON buscamos en statistics la cantidad de sub que tiene
-    data = json.loads(urllib.request.urlopen(f'https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername={canal_yt.strip()}&key={api_key_yt}').read().decode('utf-8'))
-    
-    #evaluamos si se encunetran resultados para el canal
-    if data["pageInfo"]["totalResults"] == 0:
-        talk("No se encontraron resultados para el canal.")
-    else: 
-
-    #agarramos del json el direccionario de items y extraemos los subs
-        items = data.get('items', [])
-        first_item = items[0]
-        subs = first_item['statistics']['subscriberCount']
-
-
-
-        # Imprimir la cantidad de suscriptores
-        print(f"{canal_yt} tiene {subs} suscriptores.")
-        talk(f"{canal_yt} tiene {subs} suscriptores.")
-
-
-
-
-
-
-def run_spo_music(author):
-
-   
-    author = author.replace("abriendo y buscando en spotify", "")
-    
-    author = author.replace(" ", "%20")
-
-    if len(author) > 1:
-    #Aca entramos a Spoify mediante nuestras credenciales y nos devuelve un json
-        sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id= client_id, client_secret=client_secret))
-        result = sp.search(author)
-
-        
-        
-    #nos devuelve todas las canciones que se encuntran
-        for i in range(0, len(result["tracks"]["items"])):
-
-                name_song = result["tracks"]["items"][i]["name"]
-
-        #abrimos spotify
-        web.open(result["tracks"]["items"][0]["uri"])
-        sleep(5)
-        #pyautogui.press("enter")
-
-
-
-#esto es porque si no nos dan un autor pero si la cancion, buscamos la cancion
-    else:
-
-        talk("no escuche un autor en concreto")
-
 
 
 
@@ -162,6 +65,8 @@ def call_functions():
 
 
 
+if __name__ == '__main__':
+    call_functions()
 
         
             
@@ -169,4 +74,3 @@ def call_functions():
     
 
 
-call_functions()
