@@ -1,7 +1,7 @@
-from Funcionalidades.talker import talk
-from Funcionalidades.listener import listen
-from Funcionalidades.Metodos.YT import run_yt_video, run_yt_sub
-from Funcionalidades.Metodos.Spotify import run_spo_music
+from Funcionalidad.talker import talk
+from Funcionalidad.listener import listen
+from Funcionalidad.Metodos.YT import run_yt_video, run_yt_sub
+from Funcionalidad.Metodos.Spotify import run_spo_music
 import pyautogui
 from time import sleep
 
@@ -12,12 +12,15 @@ from time import sleep
 
 def call_functions():
 
-    sleep(2)
+   
     input = listen()
+
+    print(input)
+    
 
 # Reproducir algo en YouTube
 
-    all_forms = ["reproduci in youtube", "reproduce in youtube"]
+    all_forms = ["reproducir en YouTube", "reproduce en YouTube"]
 
  # Verificar si alguna forma está en la entrada de voz
     for forma in all_forms:
@@ -53,15 +56,8 @@ def call_functions():
                     run_spo_music(input)
                 else:
                     
-                    if input == "hola soy Alexa, que queres hacer":
-                        talk("Perdon no escuche nada")
-                        
-                        call_functions()
-                    else:
-                        talk("Perdon no entendi lo que dijiste")
-                        
-                        call_functions()
-
+                    talk("no etendi lo que dijiste")
+                    call_functions()
 
 
 
