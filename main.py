@@ -1,5 +1,5 @@
-from Funcionalidad.talker import talk
-from Funcionalidad.listener import listen
+from Funcionalidad.talker.talker import talk
+from Funcionalidad.listen.listener import listen
 from Funcionalidad.Metodos.YT import run_yt_video, run_yt_sub
 from Funcionalidad.Metodos.Spotify import run_spo_music
 import pyautogui
