@@ -13,3 +13,4 @@ def talk(text):
     voz.say (text)
     voz.runAndWait()
 
+ 
