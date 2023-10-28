@@ -4,7 +4,7 @@ from Funcionalidad.Metodos.YT import run_yt_video, run_yt_sub
 from Funcionalidad.Metodos.Spotify import run_spo_music
 import pyautogui
 from time import sleep
-from Funcionalidad.keyword.keyword import keyword
+from Funcionalidad.keywords.keywords import keyword_list
 
 
 
@@ -19,9 +19,10 @@ def call_functions():
     
 
 #comando raro: basicamente verifica si en el input esta alguna keyword
-    command = list(filter(lambda x: x in input, keyword))
+    command = list(filter(lambda x: x in input, keyword_list))
     if command:
-        keyword[command[0]]()
+        keyword_list[command[0]]()
+
 # Reproducir algo en YouTube
 
     all_forms = ["reproducir en YouTube", "reproduce en YouTube"]

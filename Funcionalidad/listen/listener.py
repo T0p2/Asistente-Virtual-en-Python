@@ -28,7 +28,6 @@ save_path = os.path.join(temp_file, 'temp.wav')
 # temporal y devuelve la ruta del archivo.
 def listen_for_mic():
     try:
-        print(save_path)
         with sr.Microphone() as source:
             print("Deci algo")
             listener.adjust_for_ambient_noise(source)
@@ -46,8 +45,9 @@ def listen_for_mic():
 def recognize_audio(save_path):
     audio_model = whisper.load_model("medium")
     transcription = audio_model.transcribe(save_path, language = "spanish", fp16 = False)
-    return transcription["text"]
+        
+    return str(transcription['text'])
 
 
 def listen():
-    return recognize_audio(listen_for_mic())
+    return recognize_audio(listen_for_mic()).lower()
